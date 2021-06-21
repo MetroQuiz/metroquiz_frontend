@@ -26,9 +26,9 @@
         </svg>
       </span>
       </a>
-      <a class="cta" href="#" style="margin-top: 25px; margin-left: -25px">
+      <a class="cta" href="#" style="margin-top: 25px; margin-left: -20px">
         <span>
-          <input placeholder="Type name" v-model="name" >
+          <input style="padding-left: 15px;" placeholder="Type name" v-model="name" >
         </span>
         <span>
         <svg @click="submit()" width="66px" height="43px" viewBox="0 0 66 43" version="1.1" xmlns="http://www.w3.org/2000/svg"
@@ -48,7 +48,7 @@
       </span>
       </a>
     </div>
-    <button class="admin" v-on:click="admin()">Вход для админов</button>
+    <button class="admin" v-on:click="admin()">Entrance for teachers</button>
   </div>
 
 </template>
@@ -59,7 +59,7 @@ export default {
   name: 'EnterForm',
   data:() => ({
     pincode: '',
-    message: 'Введите пин и имя',
+    message: 'Enter game pin & nickname',
     tried: false,
     name: ''
   }),
@@ -210,7 +210,7 @@ export default {
   box-sizing: border-box;
   width: 100%;
   display: flex;
-  padding: 10px 45px;
+  padding: 10px 122px;
   text-decoration: none;
   font-size: 40px;
   color: white;

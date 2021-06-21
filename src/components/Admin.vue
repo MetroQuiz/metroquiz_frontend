@@ -132,7 +132,7 @@
 
 <script>
 export default {
-name: "Admin",
+  name: "Admin",
   data() {
     return {
       search: '',
@@ -183,9 +183,7 @@ name: "Admin",
                 }
                 this.games.push(new_game)
               })
-
               this.question_amount = response.data.question_amount
-
             }
           }).catch((error) => {
             console.log(error)
@@ -202,8 +200,6 @@ name: "Admin",
           this.$router.push("auth")
         }
       })
-
-
     }
   },
   methods: {
@@ -252,7 +248,6 @@ name: "Admin",
       })
       event.preventDefault()
     }
-
   }
 }
 </script>
@@ -322,33 +317,25 @@ input[type="text"], input[type="password"], input[type="email"] {
   border: 1px solid #ECEAF3;
   border-radius: 18px;
   max-width: 200px;
-
-
 }
-
 .big-info-card {
   border-radius: 25px !important;
   transition: all 0.2s ease-in-out;
 }
-
 .big-info-card:hover {
   border-radius: 18px !important;
   transition: all 0.2s ease-in-out;
 }
-
 .info-card {
   border-radius: 20px !important;
   transition: all 0.2s ease-in-out;
 }
-
 .info-card:hover {
   border-radius: 15px !important;
   transition: all 0.2s ease-in-out;
 }
-
 input:required {
 }
-
 .head p {
   color: #A3A3A3;
   font-weight: 200;
@@ -372,18 +359,12 @@ input:required {
 .game::-webkit-scrollbar {
   display: none;  /* Safari and Chrome */
 }
-
-
 form .row {
   display: flex;
 }
-
-
 form #logo {
   padding-right: 15px;
 }
-
-
 form {
   background: white;
   border-radius: 24px;
@@ -393,7 +374,6 @@ form {
   justify-content: space-between;
   flex-direction: column;
 }
-
 form h3 {
   font-family: 'Poppins', sans-serif;
   font-weight: 400;
@@ -402,14 +382,12 @@ form h3 {
   line-height: 18px;
   color: #A3A3A3;
 }
-
 form h1 {
   font-family: 'Poppins', sans-serif;
   font-weight: 900;
   font-size: 26px;
   margin: 0;
 }
-
 form h2 {
   font-family: 'Poppins', sans-serif;
   font-weight: 400;
@@ -418,7 +396,6 @@ form h2 {
   line-height: 18px;
   color: #A3A3A3;
 }
-
 select {
   margin-top: 30px;
   outline: none;
@@ -435,12 +412,9 @@ select {
   -moz-appearance: none;
   text-indent: 1px;
   text-overflow: '';
-
 }
-
 form input:required {
 }
-
 form input[type="submit"] {
   margin-top: 30px;
   color: white;
@@ -452,7 +426,6 @@ form input[type="submit"] {
   border-radius: 18px;
   border: none;
 }
-
 form button {
   margin-top: 30px;
   color: black;
@@ -464,12 +437,8 @@ form button {
   border-radius: 18px;
   border: none;
 }
-
-
 form a {
   color: inherit;
   text-decoration: inherit;
 }
-
-
 </style>
