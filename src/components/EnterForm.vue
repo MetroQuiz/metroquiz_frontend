@@ -3,14 +3,14 @@
     <div class="bg"></div>
     <div class="bg bg2"></div>
     <div class="bg bg3"></div>
-    <div class="" id="enter_form">
+    <div class="content" id="enter_form">
       <h1 class="pin_message" v-bind:style="!tried ? {'color' : 'white'} : {'color' : '#FF5A5A'}">{{message}}</h1>
       <a class="cta" href="#">
-        <span>
+        <span class="form_item">
           <input placeholder="1234-1234" v-model="pincode" @keypress="pinChanged" @keydown.delete="pinChanged">
         </span>
         <span>
-        <svg @click="submit()" width="66px" height="43px" viewBox="0 0 66 43" version="1.1" xmlns="http://www.w3.org/2000/svg"
+        <svg @click="submit()" width="66px" height="43px" style="margin-right: -20px !important;" viewBox="0 0 66 43" version="1.1" xmlns="http://www.w3.org/2000/svg"
              xmlns:xlink="http://www.w3.org/1999/xlink">
           <g id="arrow" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" >
             <path class="one"
@@ -26,11 +26,11 @@
         </svg>
       </span>
       </a>
-      <a class="cta" href="#" style="margin-top: 25px; margin-left: -20px">
-        <span>
-          <input style="padding-left: 15px;" placeholder="Type name" v-model="name" >
+      <a class="cta cta2" href="#">
+        <span class="form_item">
+          <input placeholder="Type name" v-model="name" >
         </span>
-        <span>
+        <span style="margin-left: 8% !important;">
         <svg @click="submit()" width="66px" height="43px" viewBox="0 0 66 43" version="1.1" xmlns="http://www.w3.org/2000/svg"
              xmlns:xlink="http://www.w3.org/1999/xlink">
           <g id="arrow" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" >
@@ -116,12 +116,12 @@ export default {
             this.$router.push({ name: 'game'})
           }
           else if (response.status === 208) {
-            this.message = "Вы слишком рано)"
+            this.message = "You are too early. The game has not started yet"
             this.tried = true
           }
         }).catch((error) => {
           console.log(error)
-          this.message = "Неверный пинкод"
+          this.message = "Wrong gamepin"
           this.tried = true
         })
       }
@@ -155,6 +155,79 @@ export default {
   font-family: 'Rubik Mono One', sans-serif;
 
 }
+
+.content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.cta {
+  font-family: 'Rubik Mono One', sans-serif;
+  box-sizing: border-box;
+  width: 100%;
+  display: flex;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  text-decoration: none;
+  font-size: 40px;
+  color: white;
+  background: #6225E6;
+  transition: 1s;
+  box-shadow: 6px 6px 0 black;
+  align-content: center;
+  transform: skewX(-15deg);
+}
+
+.cta2 {
+  margin-top: 25px;
+  margin-left: -20px;
+}
+
+.cta:focus {
+  outline: none;
+}
+
+.cta:hover {
+  transition: 0.5s;
+  box-shadow: 10px 10px 0 #FBC638;
+}
+
+.cta span:nth-child(2) {
+  transition: 0.5s;
+  margin-right: 0px;
+}
+
+.cta:hover span:nth-child(2) {
+  transition: 0.5s;
+  margin-right: 45px;
+}
+
+@media screen and (max-width: 689px) {
+  .cta {
+    font-family: 'Rubik Mono One', sans-serif;
+    box-sizing: border-box;
+    width: 80%;
+    display: flex;
+    padding: 10px 122px;
+    text-decoration: none;
+    align-items: center;
+    font-size: 40px;
+    color: white;
+    background: #6225E6;
+    transition: 1s;
+    box-shadow: 6px 6px 0 black;
+    transform: skewX(-15deg);
+    vertical-align: center;
+  }
+  .cta2 {
+    margin-top: 25px;
+    margin-left: -10px !important;
+  }
+}
+
 .bg {
   animation: slide 3s ease-in-out infinite alternate;
   background-image: linear-gradient(-60deg, #6c3 50%, #09f 50%);
@@ -205,43 +278,13 @@ export default {
   justify-content: center;
 }
 
-.cta {
-  font-family: 'Rubik Mono One', sans-serif;
-  box-sizing: border-box;
-  width: 100%;
-  display: flex;
-  padding: 10px 122px;
-  text-decoration: none;
-  font-size: 40px;
-  color: white;
-  background: #6225E6;
-  transition: 1s;
-  box-shadow: 6px 6px 0 black;
-  transform: skewX(-15deg);
-}
-
-.cta:focus {
-  outline: none;
-}
-
-.cta:hover {
-  transition: 0.5s;
-  box-shadow: 10px 10px 0 #FBC638;
-}
-
-.cta span:nth-child(2) {
-  transition: 0.5s;
-  margin-right: 0px;
-}
-
-.cta:hover span:nth-child(2) {
-  transition: 0.5s;
-  margin-right: 45px;
-}
-
 span {
   margin-top: 5px;
-  transform: skewX(15deg)
+  transform: skewX(15deg);
+}
+
+.form_item {
+  margin-left: 25%;
 }
 
 span:nth-child(2) {
