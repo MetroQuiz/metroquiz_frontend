@@ -1230,11 +1230,11 @@
     </linearGradient><path id="line2_20-lineD2_29" class="st233" d="M1012.3,1554.1c0,0.8-0.7,1.4-1.5,1.4s-1.5-0.6-1.5-1.4s0.6-1.5,1.5-1.5
 	S1012.3,1553.3,1012.3,1554.1z M1012.3,1559.1c0,0.8-0.7,1.4-1.5,1.4s-1.5-0.6-1.5-1.4s0.6-1.5,1.5-1.5
 	C1011.7,1557.5,1012.3,1558.3,1012.3,1559.1z M1012.3,1549.2c0,0.8-0.7,1.4-1.5,1.4s-1.5-0.6-1.5-1.4s0.6-1.5,1.5-1.5
-	C1011.7,1547.6,1012.3,1548.4,1012.3,1549.2z" style="fill:url(#line2_20-lineD2_29_1_);"></path><linearGradient id="line2_23-line10_22_1_" gradientUnits="userSpaceOnUse" x1="87172.0938" y1="4658.9038" x2="87182.0781" y2="4658.9038" gradientTransform="matrix(-0.5831 0 0 -0.5831 51931.3008 4385.5571)"><stop offset="0.2068" style="stop-color:#4BAF4F">
+	C1011.7,1547.6,1012.3,1548.4,1012.3,1549.2z" style="fill:url(#line2_20-lineD2_29_1_);"></path><linearGradient id="line2_23-line10_23_1_" gradientUnits="userSpaceOnUse" x1="87172.0938" y1="4658.9038" x2="87182.0781" y2="4658.9038" gradientTransform="matrix(-0.5831 0 0 -0.5831 51931.3008 4385.5571)"><stop offset="0.2068" style="stop-color:#4BAF4F">
     </stop>
       <stop offset="0.8728" style="stop-color:#BED12E">
       </stop>
-    </linearGradient><rect id="line2_23-line10_22" x="1095.2" y="1665.7" class="st234" width="5.9" height="6.5" style="fill:url(#line2_23-line10_22_1_);"></rect><rect id="white_line2_23-line10_22" x="1087.7" y="1668" class="st2" width="20.9" height="2" style="fill:#FFFFFF;"></rect><linearGradient id="line3_3-lineD2_7_1_" gradientUnits="userSpaceOnUse" x1="-6110.7119" y1="10751.4883" x2="-6114.3555" y2="10743.8291" gradientTransform="matrix(0.2588 0.9659 -0.9659 0.2588 12159.9619 3466.0347)"><stop offset="0" style="stop-color:#0A72B9">
+    </linearGradient><rect id="line2_23-line10_23" x="1095.2" y="1665.7" class="st234" width="5.9" height="6.5" style="fill:url(#line2_23-line10_23_1_);"></rect><rect id="white_line2_23-line10_23" x="1087.7" y="1668" class="st2" width="20.9" height="2" style="fill:#FFFFFF;"></rect><linearGradient id="line3_3-lineD2_7_1_" gradientUnits="userSpaceOnUse" x1="-6110.7119" y1="10751.4883" x2="-6114.3555" y2="10743.8291" gradientTransform="matrix(0.2588 0.9659 -0.9659 0.2588 12159.9619 3466.0347)"><stop offset="0" style="stop-color:#0A72B9">
     </stop>
       <stop offset="1" style="stop-color:#E94282">
       </stop>
@@ -2830,19 +2830,44 @@ export default {
           }
         })
         for (var stage_obj of map[station].neighbours) {
-          if (map[stage_obj.to] && map[stage_obj.to].isActive) {
-            if (stage_obj.color) {
+          console.log(stage_obj, map[stage_obj.to], map[stage_obj.to].isActive)
+          if (map[stage_obj.to]) {
+            if (stage_obj.color !== [] && stage_obj.color) {
               colorStage(station, stage_obj)
-            }
-            else {
-              var stage_obj2 = map[stage_obj.to].neighbours.find(obj => {
-                return obj.to === station
-              })
-              colorStage(stage_obj.to, stage_obj2)
             }
           }
         }
+      for (var station2 in map) {
+        if (!map[station2].neighbours) {
+          continue
+        }
+        var stage_obj = map[station2].neighbours.find((o) => o.to === station)
+        if (stage_obj) {
+          colorStage(station2, stage_obj)
+        }
       }
+
+      }
+    },
+    check: function(station) {
+      for (var stage_obj of map[station].neighbours) {
+        if (map[stage_obj.to] && map[stage_obj.to].isActive) {
+          console.log("1", stage_obj.to)
+          return true
+        }
+      }
+      for (var station2 in map) {
+        if (!map[station2].isActive) {
+          continue
+        }
+        for (var stage_obj2 of map[station2].neighbours) {
+          if (stage_obj2.to === station) {
+            console.log("2", station2)
+            return true
+          }
+        }
+      }
+      return false
     }
 
   },
@@ -2968,7 +2993,7 @@ export default {
   created() {
 
     this.$on("station_click", function(e) {
-      this.$parent.stationChoose(this.stationByName[e.target.parentElement.textContent])
+      this.$parent.stationChoose(this.stationByName[e.target.parentElement.textContent], e.target.parentElement.textContent)
     })
 
   }
