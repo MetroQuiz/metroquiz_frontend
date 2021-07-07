@@ -22,6 +22,11 @@
                   <img style="display: inline-block; float: right;" src="../assets/folder.svg"/>
                 </div>
               </div>
+              <div class="row info-card" style="align-items: flex-start;  width: 335px; border-radius: 20px; justify-content: space-between; margin-left: 15px; padding: 30px 40px; background: #FF5B5B;">
+                <div>
+                  <h4>{{ pending }}</h4>
+                  <p style="color: white">Pending start</p>
+                </div>
 
               <div class="card" style="background-color: #FF5B5B">
                 <div style="display: block">
@@ -32,7 +37,6 @@
                   <img style="display: inline-block; float: right;" src="../assets/wait.svg"/>
                 </div>
               </div>
-
             </div>
 
             <div class="row">
@@ -59,7 +63,30 @@
 
             </div>
           </div>
+          
+          <div v-if="addQuestionForm.show" style="display: flex;justify-content: center;align-items: center;position: absolute; height: 100vh; width: 100vw; background-color: transparent">
+            <form @submit="addQuestion($event)" class="question">
+              <div class="row" style="margin-left: 0px">
+                <div style="display: flex; flex-direction: column; justify-content: center">
+                  <h1>Add question</h1>
+                  <h2>Add new question for specific station</h2>
+                </div>
+              </div>
+              <select  v-model="addQuestionForm.station" required style="margin-left: 0px; margin-top: 20px; max-width: 600px !important;">
+                <optgroup label="">
+                  <option value="" disabled selected>Choose station</option>
+                  <option v-for="station in stations" :ket="station.id" v-bind:value="station.id">{{station.name}}</option>
+                </optgroup>
+              </select>
+              <textarea  style="margin-left: 0px; margin-top: 20px; max-width: 600px !important;" v-model="addQuestionForm.text" type="text" placeholder="Question text" required></textarea>
+              <textarea  style="margin-left: 0px; margin-top: 20px; max-width: 600px !important;" v-model="addQuestionForm.answer" type="text" placeholder="Answer" required></textarea>
 
+              <div class="row" style="justify-content: space-between; max-width: 600px; margin-left: 0px">
+                <input type="submit" value="Add" style="margin-right: 100px">
+              </div>
+            </form>
+          </div>
+          
           <div class="question">
             <div class="question-card" style="padding: 50px 40px;">
               <h3>Questions in base:</h3>
@@ -92,6 +119,7 @@
                 <div v-if="game.status === 'preparing'" style="margin-left: 0px; padding: 10px 20px; border-radius: 10px; align-items: center; justify-content: center; width: 120px;margin-top: -5px;background-color: rgb(255,245,229);"><h5 style="font-size: 10px">Preparing</h5></div>
                 <div v-if="game.status === 'end'"  style="margin-left: 0px; padding: 10px 20px; border-radius: 10px; align-items: center; justify-content: center; width: 120px;margin-top: -5px;background-color: rgb(224,249,241);"><h5 style="font-size: 10px; color: rgb(0, 163, 137)">Finished</h5></div>
 
+
                 <div style="width: 55px; margin-left: 80px; " class="row">
                   <img src="../assets/next.svg" style="height: 20px; margin-right: 15px"/>
                   <img src="../assets/share.svg" @click="togleGame($event, game.id)" style="height: 20px"/>
@@ -123,6 +151,7 @@
         </div>
       </div>
 
+      </div>
     </div>
     <div id="messageSame" style="position: absolute; top: 20px; left: -540px; padding: 20px; padding-left: 50px; border-radius: 15px; background-color: #FF5A5A">
       <p style="color: white">You cannot use the same station as origin and destination</p>
@@ -154,7 +183,13 @@ export default {
       playing: 0,
       finished: 0,
       question_amount: 0,
-      games: []
+      games: [],
+      addQuestionForm: {
+        show: false,
+        text: '',
+        answer: '',
+        station: ''
+      }
     }
   },
   created() {
@@ -162,13 +197,15 @@ export default {
       this.$router.push({name: "auth"})
     }
     else {
-      this.axios.get("http://127.0.0.1:8080/api/admin/stations", {headers : {"Authorization": `Bearer ${this.$cookies.get("admin_token")}`}}).then((response) => {
+      this.axios.get("http://176.99.173.63:8080/api/admin/stations", {headers : {"Authorization": `Bearer ${this.$cookies.get("admin_token")}`}}).then((response) => {
         if (response.status === 200) {
           response.data.forEach((station) => {
             station.name = this.$CyrillicToTranslit().transform(station.name)
             this.stations.push(station)
           })
-          this.axios.get("http://127.0.0.1:8080/api/admin/me", {headers : {"Authorization": `Bearer ${this.$cookies.get("admin_token")}`}}).then((response) => {
+          this.stations.sort(((a, b) => a.name > b.name))
+          console.log(this.stations)
+          this.axios.get("http://176.99.173.63:8080/api/admin/me", {headers : {"Authorization": `Bearer ${this.$cookies.get("admin_token")}`}}).then((response) => {
             if (response.status === 200) {
               this.created = response.data.games.length
               response.data.games.forEach((game) => {
@@ -198,24 +235,31 @@ export default {
           }).catch((error) => {
             console.log(error)
             if (error.response.status === 401) {
-              this.$cookies.remove("admin_token")
-              this.$router.push("auth")
+              this.$cookies.remove("token")
+              this.$router.push({name: "EnterForm"})
             }
           })
         }
       }).catch((error) => {
         console.log(error)
         if (error.response.status === 401) {
-          this.$cookies.remove("admin_token")
-          this.$router.push("auth")
+          this.$cookies.remove("token")
+          this.$router.push({name: "EnterForm"})
         }
       })
     }
   },
   methods: {
+    addQuestion(event) {
+      this.addQuestionForm.show = false
+      event.preventDefault()
+    },
+    showQuestionForm() {
+      this.addQuestionForm.show = true
+    },
     togleGame(event, id) {
       console.log(id)
-      this.axios.post("http://127.0.0.1:8080/api/admin/toggle_status", this.qs.stringify({game_id: id}), {headers : {"Authorization": `Bearer ${this.$cookies.get("admin_token")}`}}).then((response) => {
+      this.axios.post("http://176.99.173.63:8080/api/admin/toggle_status", this.qs.stringify({game_id: id}), {headers : {"Authorization": `Bearer ${this.$cookies.get("admin_token")}`}}).then((response) => {
         if (response.status === 200) {
           var index = this.games.findIndex((game) => game.id === id)
           this.games[index].status = response.data.status
@@ -233,7 +277,7 @@ export default {
         document.querySelector("#message").style.left = "-20px"
         setTimeout(() => document.querySelector("#messageSame").style.left = "-540px", 3000)
       }
-      this.axios.post("http://127.0.0.1:8080/api/admin", this.qs.stringify({origin_id: this.origin, destination_id: this.destination}), {headers : {"Authorization": `Bearer ${this.$cookies.get("admin_token")}`}}).then((response) => {
+      this.axios.post("http://176.99.173.63:8080/api/admin", this.qs.stringify({origin_id: this.origin, destination_id: this.destination}), {headers : {"Authorization": `Bearer ${this.$cookies.get("admin_token")}`}}).then((response) => {
         if (response.status === 200) {
           document.querySelector("#messageOK").style.left = "-20px"
           setTimeout(() => document.querySelector("#messageOK").style.left = "-540px", 3000)
@@ -415,6 +459,7 @@ export default {
     }
   }
 
+
   @media screen and (max-width: 926px) {
     .gam_bik {
       float: left;
@@ -542,6 +587,7 @@ export default {
     color: inherit;
     text-decoration: inherit;
   }
+
 
 
   h1 {
