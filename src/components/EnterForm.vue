@@ -9,8 +9,8 @@
         <span class="form_item">
           <input placeholder="1234-1234" v-model="pincode" @keypress="pinChanged" @keydown.delete="pinChanged">
         </span>
-        <span>
-        <svg @click="submit()" width="66px" height="43px" style="margin-right: -20px !important;" viewBox="0 0 66 43" version="1.1" xmlns="http://www.w3.org/2000/svg"
+        <span style="margin-left: 5% !important;">
+        <svg @click="submit()" width="66px" height="43px" viewBox="0 0 66 43" version="1.1" xmlns="http://www.w3.org/2000/svg"
              xmlns:xlink="http://www.w3.org/1999/xlink">
           <g id="arrow" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" >
             <path class="one"
@@ -120,16 +120,16 @@ export default {
             this.tried = true
           }
           else if (response.status === 409) {
-            this.message = "Это имя уже занято"
+            this.message = "This nickname is already in use"
             this.tried = true
           }
         }).catch((error) => {
           if (error.response.status === 409) {
-            this.message = "Это имя уже занято"
+            this.message = "This nickname is already in use"
             this.tried = true
           }
           else {
-            this.message = "Неверный пинкод"
+            this.message = "Wrong gamepin"
             this.tried = true
           }
         })
@@ -214,13 +214,20 @@ export default {
   margin-right: 45px;
 }
 
-@media screen and (max-width: 689px) {
+.form_item {
+  margin-left: 25%;
+}
+
+@media screen and (max-width: 950px) {
   .cta {
     font-family: 'Rubik Mono One', sans-serif;
     box-sizing: border-box;
     width: 80%;
     display: flex;
-    padding: 10px 122px;
+    paddin-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 60px;
+    padding-right: 100px;
     text-decoration: none;
     align-items: center;
     font-size: 40px;
@@ -230,10 +237,14 @@ export default {
     box-shadow: 6px 6px 0 black;
     transform: skewX(-15deg);
     vertical-align: center;
+    margin-left: 10%;
   }
   .cta2 {
     margin-top: 25px;
-    margin-left: -10px !important;
+    margin-left: 30px;
+  }
+  .form_item {
+    margin-left: -20px !important;
   }
 }
 
@@ -290,10 +301,6 @@ export default {
 span {
   margin-top: 5px;
   transform: skewX(15deg);
-}
-
-.form_item {
-  margin-left: 25%;
 }
 
 span:nth-child(2) {
