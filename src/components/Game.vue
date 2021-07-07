@@ -6,7 +6,7 @@
     </div>
     <div v-if="stationChooseDialog.show" style="position: absolute; z-index: 2; top: 0; left: 0; width: 100vw; height: 100vh; background-color: transparent; display: flex; justify-content: center; align-items: center">
       <div class="choose-dialog"  style="background-color: #F9F9F9; border-color: #6225E6; border-style: solid;">
-        <h1 style="margin-left: 20px;">Выберите цвет станции</h1>
+        <h1 style="margin-left: 20px;">Сhoose station color</h1>
         <div>
           <img @click="chooseColor($event, '1')" v-if="stationChooseDialog.variants.includes('1')" src="../assets/lines_icons/1.svg" height="200px" width="200px" style="margin-right: 50px" />
           <img @click="chooseColor($event, '2')" v-if="stationChooseDialog.variants.includes('2')" src="../assets/lines_icons/2.svg" height="200px" width="200px" style="margin-right: 50px" />
@@ -88,7 +88,7 @@
   </div>
   <div id="messageWS" style="z-index: 2; position: absolute; top: 20px; left: -540px; padding: 20px; padding-left: 50px; border-radius: 15px; background-color: #FF5A5A">
     <p style="color: white">Something went wrong while connecting websocket</p>
-    <p  style="color: white">Check your traffic blockers to accept webscket connections</p>
+    <p  style="color: white">Check your traffic blockers to accept websocket connections</p>
   </div>
   <div id="messageAlready" style="z-index: 2; position: absolute; top: 20px; left: -540px; padding: 20px; padding-left: 50px; border-radius: 15px; background-color: #FF5A5A">
     <p style="color: white">Your already answered question on this station</p>

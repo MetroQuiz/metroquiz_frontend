@@ -4,7 +4,7 @@
       <img alt="logo" id="logo"  src="../assets/icon.svg">
       <div style="display: flex; flex-direction: column; justify-content: center">
         <h1>Metroquiz</h1>
-        <h2>Educational quiz about moscow metro</h2>
+        <h2>Educational quiz about Moscow subway</h2>
       </div>
     </div>
     <input v-model="form.email" type="email" placeholder="Email" required>
