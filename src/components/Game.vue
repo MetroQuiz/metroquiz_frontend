@@ -224,11 +224,13 @@ export default {
 
       for (var station of stations) {
         if (!this.$refs.map.check(station)) {
+          console.log("bu")
           continue;
         }
         this.stationChooseDialog.variants.push(station.slice(4).split("_")[0])
         this.stationChooseDialog.variants_full.push(station)
       }
+      console.log(this.stationChooseDialog.variants.length)
       if (this.stationChooseDialog.variants.length === 1) {
         this.requestQuestion(this.stationChooseDialog.variants_full[0])
         return
@@ -256,7 +258,7 @@ export default {
         }
     },
     requestQuestion: function (station) {
-
+      console.log("here")
       this.$refs.map.activate(station)
       var station_id = this.stations.find((o) => o.svg_id === station).id
       console.log(station_id)
@@ -440,6 +442,41 @@ input[type="submit"] {
   display: inline-block;
   font-size: 14px;
   font-family: 'Rubik Mono One', sans-serif;
+}
+
+@media screen and (max-width: 600px) {
+  .exitGame {
+    z-index: 3;
+    position: absolute;
+    left: 20px;
+    bottom: 20px;
+    background-color:  #6225E6;
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    font-family: 'Rubik Mono One', sans-serif;
+    margin-bottom: 65px;
+  }
+  .admin {
+    z-index: 3;
+    position: absolute;
+    left: 20px;
+    bottom: 20px;
+    background-color:  #6225E6;
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    font-family: 'Rubik Mono One', sans-serif;
+
+  }
 }
 
 #messageWS {

@@ -4,20 +4,20 @@
     <div class="row">
       <p style="width: 10vw">№</p>
       <p class="nick">Nickname</p>
-      <p style="width: 20vw; padding-left: 30px">Score</p>
+      <p class="score" style="padding-left: 30px">Score</p>
 
     </div>
     <div v-for="(result, index) in results" class="row" style="margin-top: 0">
       <p style="width: 10vw">{{ index + 1 }}</p>
-      <p style="width: 60vw">{{result[0]}}</p>
-      <p style="width: 20vw; padding-left: 30px">{{result[1]}}</p>
+      <p class="nick">{{result[0]}}</p>
+      <p class="score" style="padding-left: 30px">{{result[1]}}</p>
 
     </div>
     <div class="row">
       <p style="width: 10vw; border-bottom-width: 0 !important;"></p>
 
-      <p style="width: 60vw; border-bottom-width: 0 !important;"></p>
-      <p style="width: 20vw; padding-left: 30px;  border-bottom-width: 0 !important;"></p>
+      <p class="nick" style="border-bottom-width: 0 !important;"></p>
+      <p class="score" style="padding-left: 30px;  border-bottom-width: 0 !important;"></p>
 
     </div>
     <div class="bg"></div>
@@ -99,6 +99,10 @@ p:nth-child(2)  {
   width: 60vw;
 }
 
+.score {
+  width: 20vw;
+}
+
 @media screen and (max-width: 600px){
   h1 {
     margin-top: 200px;
@@ -123,6 +127,9 @@ p:nth-child(2)  {
   }
   .nick {
     width: 40vw;
+  }
+  .score {
+    width: 30vw;
   }
 }
 

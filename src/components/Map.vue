@@ -2850,6 +2850,7 @@ export default {
     },
     check: function(station) {
       for (var stage_obj of map[station].neighbours) {
+        console.log(stage_obj)
         if (map[stage_obj.to] && map[stage_obj.to].isActive) {
           return true
         }
