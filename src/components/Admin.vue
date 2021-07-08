@@ -22,11 +22,6 @@
                   <img style="display: inline-block; float: right;" src="../assets/folder.svg"/>
                 </div>
               </div>
-              <div class="row info-card" style="align-items: flex-start;  width: 335px; border-radius: 20px; justify-content: space-between; margin-left: 15px; padding: 30px 40px; background: #FF5B5B;">
-                <div>
-                  <h4>{{ pending }}</h4>
-                  <p style="color: white">Pending start</p>
-                </div>
 
               <div class="card" style="background-color: #FF5B5B">
                 <div style="display: block">
@@ -37,6 +32,7 @@
                   <img style="display: inline-block; float: right;" src="../assets/wait.svg"/>
                 </div>
               </div>
+
             </div>
 
             <div class="row">
@@ -63,30 +59,7 @@
 
             </div>
           </div>
-          
-          <div v-if="addQuestionForm.show" style="display: flex;justify-content: center;align-items: center;position: absolute; height: 100vh; width: 100vw; background-color: transparent">
-            <form @submit="addQuestion($event)" class="question">
-              <div class="row" style="margin-left: 0px">
-                <div style="display: flex; flex-direction: column; justify-content: center">
-                  <h1>Add question</h1>
-                  <h2>Add new question for specific station</h2>
-                </div>
-              </div>
-              <select  v-model="addQuestionForm.station" required style="margin-left: 0px; margin-top: 20px; max-width: 600px !important;">
-                <optgroup label="">
-                  <option value="" disabled selected>Choose station</option>
-                  <option v-for="station in stations" :ket="station.id" v-bind:value="station.id">{{station.name}}</option>
-                </optgroup>
-              </select>
-              <textarea  style="margin-left: 0px; margin-top: 20px; max-width: 600px !important;" v-model="addQuestionForm.text" type="text" placeholder="Question text" required></textarea>
-              <textarea  style="margin-left: 0px; margin-top: 20px; max-width: 600px !important;" v-model="addQuestionForm.answer" type="text" placeholder="Answer" required></textarea>
 
-              <div class="row" style="justify-content: space-between; max-width: 600px; margin-left: 0px">
-                <input type="submit" value="Add" style="margin-right: 100px">
-              </div>
-            </form>
-          </div>
-          
           <div class="question">
             <div class="question-card" style="padding: 50px 40px;">
               <h3>Questions in base:</h3>
@@ -119,7 +92,6 @@
                 <div v-if="game.status === 'preparing'" style="margin-left: 0px; padding: 10px 20px; border-radius: 10px; align-items: center; justify-content: center; width: 120px;margin-top: -5px;background-color: rgb(255,245,229);"><h5 style="font-size: 10px">Preparing</h5></div>
                 <div v-if="game.status === 'end'"  style="margin-left: 0px; padding: 10px 20px; border-radius: 10px; align-items: center; justify-content: center; width: 120px;margin-top: -5px;background-color: rgb(224,249,241);"><h5 style="font-size: 10px; color: rgb(0, 163, 137)">Finished</h5></div>
 
-
                 <div style="width: 55px; margin-left: 80px; " class="row">
                   <img src="../assets/next.svg" style="height: 20px; margin-right: 15px"/>
                   <img src="../assets/share.svg" @click="togleGame($event, game.id)" style="height: 20px"/>
@@ -151,7 +123,6 @@
         </div>
       </div>
 
-      </div>
     </div>
     <div id="messageSame" style="position: absolute; top: 20px; left: -540px; padding: 20px; padding-left: 50px; border-radius: 15px; background-color: #FF5A5A">
       <p style="color: white">You cannot use the same station as origin and destination</p>
@@ -183,13 +154,7 @@ export default {
       playing: 0,
       finished: 0,
       question_amount: 0,
-      games: [],
-      addQuestionForm: {
-        show: false,
-        text: '',
-        answer: '',
-        station: ''
-      }
+      games: []
     }
   },
   created() {
@@ -197,15 +162,13 @@ export default {
       this.$router.push({name: "auth"})
     }
     else {
-      this.axios.get("http://176.99.173.63:8080/api/admin/stations", {headers : {"Authorization": `Bearer ${this.$cookies.get("admin_token")}`}}).then((response) => {
+      this.axios.get("http://127.0.0.1:8080/api/admin/stations", {headers : {"Authorization": `Bearer ${this.$cookies.get("admin_token")}`}}).then((response) => {
         if (response.status === 200) {
           response.data.forEach((station) => {
             station.name = this.$CyrillicToTranslit().transform(station.name)
             this.stations.push(station)
           })
-          this.stations.sort(((a, b) => a.name > b.name))
-          console.log(this.stations)
-          this.axios.get("http://176.99.173.63:8080/api/admin/me", {headers : {"Authorization": `Bearer ${this.$cookies.get("admin_token")}`}}).then((response) => {
+          this.axios.get("http://127.0.0.1:8080/api/admin/me", {headers : {"Authorization": `Bearer ${this.$cookies.get("admin_token")}`}}).then((response) => {
             if (response.status === 200) {
               this.created = response.data.games.length
               response.data.games.forEach((game) => {
@@ -235,31 +198,24 @@ export default {
           }).catch((error) => {
             console.log(error)
             if (error.response.status === 401) {
-              this.$cookies.remove("token")
-              this.$router.push({name: "EnterForm"})
+              this.$cookies.remove("admin_token")
+              this.$router.push("auth")
             }
           })
         }
       }).catch((error) => {
         console.log(error)
         if (error.response.status === 401) {
-          this.$cookies.remove("token")
-          this.$router.push({name: "EnterForm"})
+          this.$cookies.remove("admin_token")
+          this.$router.push("auth")
         }
       })
     }
   },
   methods: {
-    addQuestion(event) {
-      this.addQuestionForm.show = false
-      event.preventDefault()
-    },
-    showQuestionForm() {
-      this.addQuestionForm.show = true
-    },
     togleGame(event, id) {
       console.log(id)
-      this.axios.post("http://176.99.173.63:8080/api/admin/toggle_status", this.qs.stringify({game_id: id}), {headers : {"Authorization": `Bearer ${this.$cookies.get("admin_token")}`}}).then((response) => {
+      this.axios.post("http://127.0.0.1:8080/api/admin/toggle_status", this.qs.stringify({game_id: id}), {headers : {"Authorization": `Bearer ${this.$cookies.get("admin_token")}`}}).then((response) => {
         if (response.status === 200) {
           var index = this.games.findIndex((game) => game.id === id)
           this.games[index].status = response.data.status
@@ -277,7 +233,7 @@ export default {
         document.querySelector("#message").style.left = "-20px"
         setTimeout(() => document.querySelector("#messageSame").style.left = "-540px", 3000)
       }
-      this.axios.post("http://176.99.173.63:8080/api/admin", this.qs.stringify({origin_id: this.origin, destination_id: this.destination}), {headers : {"Authorization": `Bearer ${this.$cookies.get("admin_token")}`}}).then((response) => {
+      this.axios.post("http://127.0.0.1:8080/api/admin", this.qs.stringify({origin_id: this.origin, destination_id: this.destination}), {headers : {"Authorization": `Bearer ${this.$cookies.get("admin_token")}`}}).then((response) => {
         if (response.status === 200) {
           document.querySelector("#messageOK").style.left = "-20px"
           setTimeout(() => document.querySelector("#messageOK").style.left = "-540px", 3000)
@@ -307,310 +263,304 @@ export default {
 </script>
 
 <style scoped>
-  #messageSame {
-    transition: left 0.5s ease-in-out;
+#messageSame {
+  transition: left 0.5s ease-in-out;
+}
+#messageOK {
+  transition: left 0.5s ease-in-out;
+}
+#messageTogle {
+  transition: left 0.5s ease-in-out;
+}
+.container {
+  width: 1200px;
+}
+.div_body {
+  background-color: #F3F2F7;
+  width: 100%;
+  min-height: 100%;
+}
+.content {
+  margin-left: 100px;
+  margin-top: 70px;
+}
+.content_body {
+  margin-top: 40px;
+  display: block;
+  margin-left: 10px;
+}
+.row {
+  display: block;
+}
+.card {
+  border-radius: 20px;
+  width: 25%;
+  height: 150px;
+  padding: 30px 40px;
+  align-content: baseline;
+  display: inline-block;
+  margin-bottom: 30px;
+  margin-right: 30px;
+}
+.content-table {
+  display: flex;
+}
+.info {
+  width: 55%;
+}
+.question {
+  width: 40%;
+}
+.question-card {
+  border-radius: 24px;
+  background: linear-gradient(112.89deg, #464255 35.16%, #332D45 97.44%);
+  height: 330px;
+  margin-right: 100px;
+  width: 100%;
+}
+@media screen and (min-width: 1288px) {
+  .card {
+    width: 40% !important;
   }
-  #messageOK {
-    transition: left 0.5s ease-in-out;
-  }
-  #messageTogle {
-    transition: left 0.5s ease-in-out;
-  }
-  .container {
-    width: 1200px;
-  }
-  .div_body {
-    background-color: #F3F2F7;
-    width: 100%;
-    min-height: 100%;
+}
+@media screen and (max-width: 1288px) and (min-width: 950px) {
+  .card {
+    width: 45% !important;
   }
   .content {
-    margin-left: 100px;
-    margin-top: 70px;
-  }
-  .content_body {
-    margin-top: 40px;
-    display: block;
-    margin-left: 10px;
-  }
-  .row {
-    display: block;
-  }
-  .card {
-    border-radius: 20px;
-    width: 25%;
-    height: 150px;
-    padding: 30px 40px;
-    align-content: baseline;
-    display: inline-block;
-    margin-bottom: 30px;
-    margin-right: 30px;
+    margin-left: 50px !important;
+    margin-right: 50px !important;
+    margin-top: 50px !important;
   }
   .content-table {
     display: flex;
+    flex-wrap: wrap;
+    flex-direction: row-reverse;
   }
   .info {
-    width: 55%;
+    width: 100% !important;
   }
   .question {
-    width: 40%;
+    width: 100% !important;
   }
   .question-card {
-    border-radius: 24px;
+    border-radius: 20px;
     background: linear-gradient(112.89deg, #464255 35.16%, #332D45 97.44%);
-    height: 330px;
-    margin-right: 100px;
-    width: 100%;
+    width: 95%;
+    height: 300px;
+    margin-left: -13px !important;
   }
-  @media screen and (min-width: 1288px) {
-    .card {
-      width: 40% !important;
-    }
+}
+@media screen and (max-width: 950px) {
+  .card {
+    width: 100% !important;
   }
-  @media screen and (max-width: 1288px) and (min-width: 950px) {
-    .card {
-      width: 45% !important;
-    }
-    .content {
-      margin-left: 50px !important;
-      margin-right: 50px !important;
-      margin-top: 50px !important;
-    }
-    .content-table {
-      display: flex;
-      flex-wrap: wrap;
-      flex-direction: row-reverse;
-    }
-    .info {
-      width: 100% !important;
-    }
-    .question {
-      width: 100% !important;
-    }
-    .question-card {
-      border-radius: 20px;
-      background: linear-gradient(112.89deg, #464255 35.16%, #332D45 97.44%);
-      width: 95%;
-      height: 300px;
-      margin-left: -13px !important;
-    }
+  .content {
+    margin-left: 50px !important;
+    margin-right: 50px !important;
+    margin-top: 50px !important;
   }
-  @media screen and (max-width: 950px) {
-    .card {
-      width: 100% !important;
-    }
-    .content {
-      margin-left: 50px !important;
-      margin-right: 50px !important;
-      margin-top: 50px !important;
-    }
-    .content-table {
-      display: flex;
-      flex-wrap: wrap;
-      flex-direction: row-reverse;
-    }
-    .info {
-      width: 100% !important;
-    }
-    .question {
-      width: 100% !important;
-    }
-    .question-card {
-      border-radius: 20px;
-      background: linear-gradient(112.89deg, #464255 35.16%, #332D45 97.44%);
-      width: 103.5%;
-      height: 300px;
-      margin-left: -13px !important;
-    }
+  .content-table {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row-reverse;
+  }
+  .info {
+    width: 100% !important;
+  }
+  .question {
+    width: 100% !important;
+  }
+  .question-card {
+    border-radius: 20px;
+    background: linear-gradient(112.89deg, #464255 35.16%, #332D45 97.44%);
+    width: 103.5%;
+    height: 300px;
+    margin-left: -13px !important;
+  }
+}
+.gam_bik {
+  display: inline-block;
+  float: left;
+  margin-left: -10px;
+  width: 60%;
+}
+.gam_create {
+  display: inline-block;
+  float: right;
+  width: 33%;
+}
+.distance_pstyle {
+  margin-right: 10%;
+}
+@media screen and (min-width: 1148px) {
+  .distance_pstyle {
+    margin-right: 10% !important;
+  }
+}
+@media screen and (max-width: 1148px) and (min-width: 926px) {
+  .distance_pstyle {
+    margin-right: 13% !important;
   }
   .gam_bik {
-    display: inline-block;
     float: left;
     margin-left: -10px;
-    width: 60%;
+    width: 95%;
   }
   .gam_create {
-    display: inline-block;
-    float: right;
-    width: 33%;
-  }
-  .distance_pstyle {
-    margin-right: 10%;
-  }
-
-  @media screen and (min-width: 1148px) {
-    .distance_pstyle {
-      margin-right: 10% !important;
-    }
-  }
-  @media screen and (max-width: 1148px) and (min-width: 926px) {
-    .distance_pstyle {
-      margin-right: 13% !important;
-    }
-    .gam_bik {
-      float: left;
-      margin-left: -10px;
-      width: 95%;
-    }
-    .gam_create {
-      margin-top: 30px;
-      margin-left: -10px !important;
-      float: left;
-    }
-  }
-
-
-  @media screen and (max-width: 926px) {
-    .gam_bik {
-      float: left;
-      margin-left: -10px !important;
-      width: 103.5%;
-    }
-    .gam_create {
-      margin-top: 30px;
-      width: 103.5%;
-      margin-left: -10px;
-    }
-  }
-  .games {
-    border-radius: 20px;
-    height: 200px;
-    background-color: white;
-    overflow-y: scroll;
-    scrollbar-width: none;
-  }
-  .head {
-    padding: 20px 50px;
-    padding-bottom: 17px;
-    border-bottom-color: #F0F0F0;
-    border-bottom-style: solid;
-    border-bottom-width: 2px;
-  }
-  .head p {
-    color: #A3A3A3;
-    font-weight: 200;
-    font-size: 14px;
-  }
-  .table {
-    padding: 20px 50px;
-    padding-bottom: 17px;
-    padding-top: 10px;
-    border-bottom-color: #F0F0F0;
-    border-bottom-style: solid;
-    border-bottom-width: 2px;
-  }
-  .table p {
-    font-weight: 200;
-    font-size: 14px;
-  }
-  form .row {
-    display: flex;
-  }
-  form #logo {
-    padding-right: 15px;
-  }
-  form {
-    background: white;
-    border-radius: 24px;
-    padding: 44px;
-    width: 300px;
-    height: 350px;
-    display: flex;
-    justify-content: space-between;
-    flex-direction: column;
-    margin-bottom: 30px;
-  }
-  form h3 {
-    font-family: 'Poppins', sans-serif;
-    font-weight: 400;
-    font-size: 24px;
-    margin: 0;
-    line-height: 18px;
-    color: #A3A3A3;
-  }
-  form h1 {
-    font-family: 'Poppins', sans-serif;
-    font-weight: 900;
-    font-size: 26px;
-    margin: 0;
-  }
-  form h2 {
-    font-family: 'Poppins', sans-serif;
-    font-weight: 400;
-    font-size: 12px;
-    margin: 0;
-    line-height: 18px;
-    color: #A3A3A3;
-  }
-  select {
     margin-top: 30px;
-    outline: none;
-    padding: 20px;
-    font-family: 'Poppins', sans-serif;
-    font-weight: normal;
-    font-size: 14px;
-    border: none;
-    background: #FFFFFF;
-    border: 1px solid #ECEAF3;
-    border-radius: 18px;
-    min-width: 150px;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    text-indent: 1px;
-    text-overflow: '';
+    margin-left: -10px !important;
+    float: left;
   }
-  form input:required {
+}
+@media screen and (max-width: 926px) {
+  .gam_bik {
+    float: left;
+    margin-left: -10px !important;
+    width: 103.5%;
   }
-  form input[type="submit"] {
+  .gam_create {
     margin-top: 30px;
-    color: white;
-    font-size: 16px;
-    font-family: 'Poppins', sans-serif;
-    font-weight: 700;
-    padding: 20px 40px;
-    background: #AB54DB;
-    border-radius: 18px;
-    border: none;
+    width: 103.5%;
+    margin-left: -10px;
   }
-  form button {
-    margin-top: 30px;
-    color: black;
-    font-size: 16px;
-    font-family: 'Poppins', sans-serif;
-    font-weight: 700;
-    padding: 20px 40px;
-    background: #E5E5E5;
-    border-radius: 18px;
-    border: none;
-  }
-  form a {
-    color: inherit;
-    text-decoration: inherit;
-  }
-
-
-
-  h1 {
-    font-family: 'Poppins', sans-serif;
-    font-weight: 700;
-    font-size: 32px;
-  }
-  h3 {
-    font-family: 'Poppins', sans-serif;
-    font-size: 24px;
-    margin-bottom: 10px;
-    color: white;
-  }
-  h4 {
-    font-family: 'Poppins', sans-serif;
-    font-weight: 600;
-    font-size: 32px;
-    margin: 0;
-    color: white;
-  }
-  p {
-    font-family: 'Poppins', sans-serif;
-    font-weight: 300;
-    margin: 0;
-  }
+}
+.games {
+  border-radius: 20px;
+  height: 200px;
+  background-color: white;
+  overflow-y: scroll;
+  scrollbar-width: none;
+}
+.head {
+  padding: 20px 50px;
+  padding-bottom: 17px;
+  border-bottom-color: #F0F0F0;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+}
+.head p {
+  color: #A3A3A3;
+  font-weight: 200;
+  font-size: 14px;
+}
+.table {
+  padding: 20px 50px;
+  padding-bottom: 17px;
+  padding-top: 10px;
+  border-bottom-color: #F0F0F0;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+}
+.table p {
+  font-weight: 200;
+  font-size: 14px;
+}
+form .row {
+  display: flex;
+}
+form #logo {
+  padding-right: 15px;
+}
+form {
+  background: white;
+  border-radius: 24px;
+  padding: 44px;
+  width: 300px;
+  height: 350px;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  margin-bottom: 30px;
+}
+form h3 {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 400;
+  font-size: 24px;
+  margin: 0;
+  line-height: 18px;
+  color: #A3A3A3;
+}
+form h1 {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 900;
+  font-size: 26px;
+  margin: 0;
+}
+form h2 {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 400;
+  font-size: 12px;
+  margin: 0;
+  line-height: 18px;
+  color: #A3A3A3;
+}
+select {
+  margin-top: 30px;
+  outline: none;
+  padding: 20px;
+  font-family: 'Poppins', sans-serif;
+  font-weight: normal;
+  font-size: 14px;
+  border: none;
+  background: #FFFFFF;
+  border: 1px solid #ECEAF3;
+  border-radius: 18px;
+  min-width: 150px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  text-indent: 1px;
+  text-overflow: '';
+}
+form input:required {
+}
+form input[type="submit"] {
+  margin-top: 30px;
+  color: white;
+  font-size: 16px;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  padding: 20px 40px;
+  background: #AB54DB;
+  border-radius: 18px;
+  border: none;
+}
+form button {
+  margin-top: 30px;
+  color: black;
+  font-size: 16px;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  padding: 20px 40px;
+  background: #E5E5E5;
+  border-radius: 18px;
+  border: none;
+}
+form a {
+  color: inherit;
+  text-decoration: inherit;
+}
+h1 {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  font-size: 32px;
+}
+h3 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 24px;
+  margin-bottom: 10px;
+  color: white;
+}
+h4 {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 32px;
+  margin: 0;
+  color: white;
+}
+p {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 300;
+  margin: 0;
+}
 </style>

@@ -59,20 +59,19 @@ export default {
   name: 'EnterForm',
   data:() => ({
     pincode: '',
-    message: 'Enter game pin & nickname',
+    message: 'Enter your nickname & gamepin',
     tried: false,
     name: ''
   }),
   mounted() {
     if (this.$cookies.isKey("token")) {
-      this.axios.get("http://176.99.173.63:8080/api/game", {headers: {"Authorization": `Bearer ${this.$cookies.get("token")}`}}).then((response) => {
+      this.axios.get("http://127.0.0.1:8080/api/game", {headers: {"Authorization": `Bearer ${this.$cookies.get("token")}`}}).then((response) => {
         if (response.status === 200) {
           this.$router.push({ name: 'game'})
         }
         else {
           this.$cookies.remove("token")
         }
-
       }).catch((error) => {
         console.log(error)
         this.$cookies.remove("token")
@@ -109,8 +108,7 @@ export default {
     },
     submit() {
       if (this.name.length >= 4 && this.pincode.length === 9) {
-        this.axios.post("http://176.99.173.63:8080/api/enter", this.qs.stringify({pin: this.pincode.slice(0, 4) + this.pincode.slice(5, 9), name: this.name})).then((response) => {
-
+        this.axios.post("http://127.0.0.1:8080/api/enter", this.qs.stringify({pin: this.pincode.slice(0, 4) + this.pincode.slice(5, 9), name: this.name})).then((response) => {
           if (response.status === 200) {
             this.$cookies.set("token", response.data.token)
             this.$router.push({ name: 'game'})
@@ -138,6 +136,7 @@ export default {
   },
 }
 </script>
+
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>

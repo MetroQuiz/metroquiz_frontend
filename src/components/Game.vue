@@ -43,7 +43,7 @@
     </div>
     <div v-if="showCorrect" style="position: absolute; z-index: 2; top: 0; left: 0; width: 100vw; height: 100vh; background-color: transparent; display: flex; justify-content: center; align-items: center">
       <div class="correct"  style="background-color: #F9F9F9; border-color: rgb(0, 163, 137); border-style: solid; border-radius: 20px">
-        <h1 style="margin-left: 20px;">Верный ответ</h1>
+        <h1 style="margin-left: 20px;">Correct anwer</h1>
         <div style="margin-top: -70px" class="success-checkmark">
           <div class="check-icon">
             <span class="icon-line line-tip"></span>
@@ -94,8 +94,8 @@
     <p style="color: white">Your already answered question on this station</p>
     <p  style="color: white">Try to answer questions on other stations</p>
   </div>
-  <button class="admin" v-on:click="admin()">Вход для админов</button>
-  <button class="exitGame" v-on:click="exitGame()">Выйти из игры</button>
+  <button class="admin" v-on:click="admin()">Entrance for teachers</button>
+  <button class="exitGame" v-on:click="exitGame()">Leave game</button>
 
 </div>
 </template>
@@ -135,20 +135,18 @@ export default {
     stations : {}
   }),
   created() {
-    this.axios.get("http://176.99.173.63:8080/api/stations", ).then((response) => {
+    this.axios.get("http://127.0.0.1:8080/api/stations", ).then((response) => {
         if (response.status === 200) {
           this.stations = response.data
-          console.log(this.stations)
         }
       }).catch((error) => {
-        console.log(error)
         this.$router.push({name : "EnterForm"})
     })
     if (!this.$cookies.isKey("token")) {
       this.$router.push({name: "EnterForm"})
       return
     }
-    this.connection = new WebSocket("ws://176.99.173.63:8080/ws");
+    this.connection = new WebSocket("ws://127.0.0.1:8080/ws");
     this.connection.onopen = (event) => {
       this.connection.send(this.$cookies.get("token"))
     }
@@ -158,7 +156,7 @@ export default {
       let message = JSON.parse(event.data)
       console.log(message.error)
       if (message.error) {
-        this.axios.get("http://176.99.173.63:8080/api/game", {headers: {"Authorization": `Bearer ${this.$cookies.get("token")}`}}).then((response) => {
+        this.axios.get("http://127.0.0.1:8080/api/game", {headers: {"Authorization": `Bearer ${this.$cookies.get("token")}`}}).then((response) => {
           if (response.status === 200) {
             document.querySelector("#messageWS").style.left = "-20px"
           }
@@ -181,7 +179,7 @@ export default {
             this.state = 0
           }
           else if (message.data.state === "in_process") {
-            this.axios.get("http://176.99.173.63:8080/api/game/passed", {headers: {"Authorization": `Bearer ${this.$cookies.get("token")}`}}).then((response) => {
+            this.axios.get("http://127.0.0.1:8080/api/game/passed", {headers: {"Authorization": `Bearer ${this.$cookies.get("token")}`}}).then((response) => {
               if (response.status === 200) {
                 for (var station of response.data.stations) {
                   this.$refs.map.activate(station.svg_id)
@@ -262,7 +260,7 @@ export default {
       this.$refs.map.activate(station)
       var station_id = this.stations.find((o) => o.svg_id === station).id
       console.log(station_id)
-      this.axios.post("http://176.99.173.63:8080/api/game/question_get", {station_id: station_id},{headers: {"Authorization": `Bearer ${this.$cookies.get("token")}`}}).then((response) => {
+      this.axios.post("http://127.0.0.1:8080/api/game/question_get", {station_id: station_id},{headers: {"Authorization": `Bearer ${this.$cookies.get("token")}`}}).then((response) => {
         if (response.status === 208) {
           document.querySelector("#messageAlready").style.left = "-20px"
           setTimeout(() => document.querySelector("#messageAlready").style.left = "-540px", 5000)
@@ -282,7 +280,7 @@ export default {
       })
     },
     answer: function() {
-      this.axios.post("http://176.99.173.63:8080/api/game/question", {text: this.answerQuestion.answer},{headers: {"Authorization": `Bearer ${this.$cookies.get("token")}`}}).then((response) => {
+      this.axios.post("http://127.0.0.1:8080/api/game/question", {text: this.answerQuestion.answer},{headers: {"Authorization": `Bearer ${this.$cookies.get("token")}`}}).then((response) => {
         this.answerQuestion.show = false
         this.answerQuestion.answer = ""
         if (response.status === 200) {

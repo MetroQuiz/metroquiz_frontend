@@ -2830,7 +2830,6 @@ export default {
           }
         })
         for (var stage_obj of map[station].neighbours) {
-          console.log(stage_obj, map[stage_obj.to], map[stage_obj.to].isActive)
           if (map[stage_obj.to]) {
             if (stage_obj.color !== [] && stage_obj.color) {
               colorStage(station, stage_obj)
@@ -2852,7 +2851,6 @@ export default {
     check: function(station) {
       for (var stage_obj of map[station].neighbours) {
         if (map[stage_obj.to] && map[stage_obj.to].isActive) {
-          console.log("1", stage_obj.to)
           return true
         }
       }
@@ -2862,7 +2860,6 @@ export default {
         }
         for (var stage_obj2 of map[station2].neighbours) {
           if (stage_obj2.to === station) {
-            console.log("2", station2)
             return true
           }
         }
@@ -2930,9 +2927,9 @@ export default {
           }
         })
         if (!(station_name in this.stationByName)) {
-          this.stationByName[station_name] = Array()
+          this.stationByName[this.$CyrillicToTranslit().transform(station_name)] = Array()
         }
-        this.stationByName[station_name].push(station)
+        this.stationByName[this.$CyrillicToTranslit().transform(station_name)].push(station)
         document.querySelectorAll(`#${station}`).forEach(element => {
           if (element.tagName != "g") {
             var clr = parseRGB(window.getComputedStyle(element).fill)
@@ -2995,12 +2992,11 @@ export default {
 
 
     }
-    console.log(this.stationByName)
-    console.log(map)
   },
   created() {
 
     this.$on("station_click", function(e) {
+      console.log(this.stationByName[e.target.parentElement.textContent], e.target.parentElement.textContent)
       this.$parent.stationChoose(this.stationByName[e.target.parentElement.textContent], e.target.parentElement.textContent)
     })
 

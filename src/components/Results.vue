@@ -1,23 +1,23 @@
 <template>
   <div style="display: flex; flex-direction: column; align-items: center; justify-content: flex-start; width: 100vw; height: 100vh">
-    <h1>{{place}} место</h1>
+    <h1>{{place}} place</h1>
     <div class="row">
-      <p style="width: 75px">№</p>
-      <p style="width: 500px">Имя</p>
-      <p style="width: 200px; padding-left: 30px">Счет</p>
+      <p style="width: 10vw">№</p>
+      <p class="nick">Nickname</p>
+      <p style="width: 20vw; padding-left: 30px">Score</p>
 
     </div>
     <div v-for="(result, index) in results" class="row" style="margin-top: 0">
-      <p style="width: 75px">{{ index + 1 }}</p>
-      <p style="width: 500px">{{result[0]}}</p>
-      <p style="width: 200px; padding-left: 30px">{{result[1]}}</p>
+      <p style="width: 10vw">{{ index + 1 }}</p>
+      <p style="width: 60vw">{{result[0]}}</p>
+      <p style="width: 20vw; padding-left: 30px">{{result[1]}}</p>
 
     </div>
     <div class="row">
-      <p style="width: 75px; border-bottom-width: 0 !important;"></p>
+      <p style="width: 10vw; border-bottom-width: 0 !important;"></p>
 
-      <p style="width: 500px; border-bottom-width: 0 !important;"></p>
-      <p style="width: 200px; padding-left: 30px;  border-bottom-width: 0 !important;"></p>
+      <p style="width: 60vw; border-bottom-width: 0 !important;"></p>
+      <p style="width: 20vw; padding-left: 30px;  border-bottom-width: 0 !important;"></p>
 
     </div>
     <div class="bg"></div>
@@ -34,7 +34,7 @@ export default {
       results: []
   }),
   created() {
-    this.axios.get("http://176.99.173.63:8080/api/game/results", {headers: {"Authorization": `Bearer ${this.$cookies.get("token")}`}}).then((response) => {
+    this.axios.get("http://127.0.0.1:8080/api/game/results", {headers: {"Authorization": `Bearer ${this.$cookies.get("token")}`}}).then((response) => {
       if (response.status === 200) {
         var results_table = response.data.results
         let name = response.data.name
@@ -68,6 +68,7 @@ h1 {
   margin-top: 100px;
   font-family: 'Rubik Mono One', sans-serif;
   font-size: 100px;
+  text-align: center;
   color: white;
   margin-bottom: 80px;
 }
@@ -94,6 +95,36 @@ p:nth-child(2)  {
   border-right-color: white;
 }
 
+.nick {
+  width: 60vw;
+}
+
+@media screen and (max-width: 600px){
+  h1 {
+    margin-top: 200px;
+    font-family: 'Rubik Mono One', sans-serif;
+    font-size: 50px;
+    text-align: center;
+    color: white;
+    margin-bottom: 80px;
+  }
+  p {
+    margin-top: 0;
+    padding-top: 20px;
+    margin-bottom: 0;
+    font-family: 'Rubik Mono One', sans-serif;
+    font-size: 25px;
+    color: white;
+    padding-bottom: 10px;
+    padding-right: 15px;
+    padding-left: 15px;
+    border-bottom-style: solid;
+    border-bottom-color: white;
+  }
+  .nick {
+    width: 40vw;
+  }
+}
 
 .bg {
   animation: slide 3s ease-in-out infinite alternate;

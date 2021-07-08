@@ -30,7 +30,7 @@ export default {
   },
   created() {
     if (this.$cookies.isKey("admin_token")) {
-      this.axios.get("http://176.99.173.63:8080/api/auth/me",  {headers : {"Authorization": `Bearer ${this.$cookies.get("admin_token")}`}}).then((response) => {
+      this.axios.get("http://127.0.0.1:8080/api/auth/me",  {headers : {"Authorization": `Bearer ${this.$cookies.get("admin_token")}`}}).then((response) => {
         if (response.status === 200) {
           this.$router.push({name: "admin"})
         }
@@ -43,7 +43,7 @@ export default {
   methods: {
     onSubmit(event) {
       event.preventDefault()
-      this.axios.post("http://176.99.173.63:8080/api/auth/login", this.qs.stringify({email: this.form.email, password: this.form.password}), {}).then((response) => {
+      this.axios.post("http://127.0.0.1:8080/api/auth/login", this.qs.stringify({email: this.form.email, password: this.form.password}), {}).then((response) => {
         if (response.status == 200) {
           this.$cookies.set("admin_token", response.data.accessToken)
           this.$router.push({name: "admin"})
