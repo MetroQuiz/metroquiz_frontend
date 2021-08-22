@@ -11,8 +11,8 @@ import qs from 'qs'
 import CyrillicToTranslit from 'cyrillic-to-translit-js';
 
 
-const cyrillicToTranslit = new CyrillicToTranslit();
-Vue.prototype.translit = cyrillicToTranslit
+//const cyrillicToTranslit = new CyrillicToTranslit();
+//Vue.prototype.translit = cyrillicToTranslit
 Vue.prototype.qs = qs
 
 import 'bootstrap/dist/css/bootstrap.css'
@@ -23,7 +23,7 @@ Vue.use(LoadScript);
 Vue.use(VueCookies)
 Vue.use(VueAxios, axios)
 Vue.config.productionTip = false
-
+Object.defineProperty(Vue.prototype, '$CyrillicToTranslit', {value : CyrillicToTranslit})
 /* eslint-disable no-new */
 new Vue({
   render: h => h(App),

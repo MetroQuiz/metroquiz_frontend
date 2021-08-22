@@ -3,13 +3,13 @@
     <div class="bg"></div>
     <div class="bg bg2"></div>
     <div class="bg bg3"></div>
-    <div class="" id="enter_form">
+    <div class="content" id="enter_form">
       <h1 class="pin_message" v-bind:style="!tried ? {'color' : 'white'} : {'color' : '#FF5A5A'}">{{message}}</h1>
       <a class="cta" href="#">
-        <span>
+        <span class="form_item">
           <input placeholder="1234-1234" v-model="pincode" @keypress="pinChanged" @keydown.delete="pinChanged">
         </span>
-        <span>
+        <span style="margin-left: 5% !important;">
         <svg @click="submit()" width="66px" height="43px" viewBox="0 0 66 43" version="1.1" xmlns="http://www.w3.org/2000/svg"
              xmlns:xlink="http://www.w3.org/1999/xlink">
           <g id="arrow" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" >
@@ -26,11 +26,11 @@
         </svg>
       </span>
       </a>
-      <a class="cta" href="#" style="margin-top: 25px; margin-left: -25px">
-        <span>
+      <a class="cta cta2" href="#">
+        <span class="form_item">
           <input placeholder="Type name" v-model="name" >
         </span>
-        <span>
+        <span style="margin-left: 8% !important;">
         <svg @click="submit()" width="66px" height="43px" viewBox="0 0 66 43" version="1.1" xmlns="http://www.w3.org/2000/svg"
              xmlns:xlink="http://www.w3.org/1999/xlink">
           <g id="arrow" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" >
@@ -48,7 +48,7 @@
       </span>
       </a>
     </div>
-    <button class="admin" v-on:click="admin()">Вход для админов</button>
+    <button class="admin" v-on:click="admin()">Entrance for teachers</button>
   </div>
 
 </template>
@@ -59,20 +59,19 @@ export default {
   name: 'EnterForm',
   data:() => ({
     pincode: '',
-    message: 'Введите пин и имя',
+    message: 'Enter your nickname & gamepin',
     tried: false,
     name: ''
   }),
   mounted() {
     if (this.$cookies.isKey("token")) {
-      this.axios.get("http://176.99.173.63:8080/api/game", {headers: {"Authorization": `Bearer ${this.$cookies.get("token")}`}}).then((response) => {
+      this.axios.get("http://127.0.0.1:8080/api/game", {headers: {"Authorization": `Bearer ${this.$cookies.get("token")}`}}).then((response) => {
         if (response.status === 200) {
           this.$router.push({ name: 'game'})
         }
         else {
           this.$cookies.remove("token")
         }
-
       }).catch((error) => {
         console.log(error)
         this.$cookies.remove("token")
@@ -109,27 +108,26 @@ export default {
     },
     submit() {
       if (this.name.length >= 4 && this.pincode.length === 9) {
-        this.axios.post("http://176.99.173.63:8080/api/enter", this.qs.stringify({pin: this.pincode.slice(0, 4) + this.pincode.slice(5, 9), name: this.name})).then((response) => {
-
+        this.axios.post("http://127.0.0.1:8080/api/enter", this.qs.stringify({pin: this.pincode.slice(0, 4) + this.pincode.slice(5, 9), name: this.name})).then((response) => {
           if (response.status === 200) {
             this.$cookies.set("token", response.data.token)
             this.$router.push({ name: 'game'})
           }
           else if (response.status === 208) {
-            this.message = "Вы слишком рано)"
+            this.message = "You are too early. The game has not started yet"
             this.tried = true
           }
           else if (response.status === 409) {
-            this.message = "Это имя уже занято"
+            this.message = "This nickname is already in use"
             this.tried = true
           }
         }).catch((error) => {
           if (error.response.status === 409) {
-            this.message = "Это имя уже занято"
+            this.message = "This nickname is already in use"
             this.tried = true
           }
           else {
-            this.message = "Неверный пинкод"
+            this.message = "Wrong gamepin"
             this.tried = true
           }
         })
@@ -138,6 +136,7 @@ export default {
   },
 }
 </script>
+
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
@@ -164,6 +163,90 @@ export default {
   font-family: 'Rubik Mono One', sans-serif;
 
 }
+
+.content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.cta {
+  font-family: 'Rubik Mono One', sans-serif;
+  box-sizing: border-box;
+  width: 100%;
+  display: flex;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  text-decoration: none;
+  font-size: 40px;
+  color: white;
+  background: #6225E6;
+  transition: 1s;
+  box-shadow: 6px 6px 0 black;
+  align-content: center;
+  transform: skewX(-15deg);
+}
+
+.cta2 {
+  margin-top: 25px;
+  margin-left: -20px;
+}
+
+.cta:focus {
+  outline: none;
+}
+
+.cta:hover {
+  transition: 0.5s;
+  box-shadow: 10px 10px 0 #FBC638;
+}
+
+.cta span:nth-child(2) {
+  transition: 0.5s;
+  margin-right: 0px;
+}
+
+.cta:hover span:nth-child(2) {
+  transition: 0.5s;
+  margin-right: 45px;
+}
+
+.form_item {
+  margin-left: 25%;
+}
+
+@media screen and (max-width: 950px) {
+  .cta {
+    font-family: 'Rubik Mono One', sans-serif;
+    box-sizing: border-box;
+    width: 80%;
+    display: flex;
+    paddin-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 60px;
+    padding-right: 100px;
+    text-decoration: none;
+    align-items: center;
+    font-size: 40px;
+    color: white;
+    background: #6225E6;
+    transition: 1s;
+    box-shadow: 6px 6px 0 black;
+    transform: skewX(-15deg);
+    vertical-align: center;
+    margin-left: 10%;
+  }
+  .cta2 {
+    margin-top: 25px;
+    margin-left: 30px;
+  }
+  .form_item {
+    margin-left: -20px !important;
+  }
+}
+
 .bg {
   animation: slide 3s ease-in-out infinite alternate;
   background-image: linear-gradient(-60deg, #6c3 50%, #09f 50%);
@@ -214,43 +297,9 @@ export default {
   justify-content: center;
 }
 
-.cta {
-  font-family: 'Rubik Mono One', sans-serif;
-  box-sizing: border-box;
-  width: 100%;
-  display: flex;
-  padding: 10px 45px;
-  text-decoration: none;
-  font-size: 40px;
-  color: white;
-  background: #6225E6;
-  transition: 1s;
-  box-shadow: 6px 6px 0 black;
-  transform: skewX(-15deg);
-}
-
-.cta:focus {
-  outline: none;
-}
-
-.cta:hover {
-  transition: 0.5s;
-  box-shadow: 10px 10px 0 #FBC638;
-}
-
-.cta span:nth-child(2) {
-  transition: 0.5s;
-  margin-right: 0px;
-}
-
-.cta:hover span:nth-child(2) {
-  transition: 0.5s;
-  margin-right: 45px;
-}
-
 span {
   margin-top: 5px;
-  transform: skewX(15deg)
+  transform: skewX(15deg);
 }
 
 span:nth-child(2) {

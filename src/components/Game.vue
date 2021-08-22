@@ -6,7 +6,7 @@
     </div>
     <div v-if="stationChooseDialog.show" style="position: absolute; z-index: 2; top: 0; left: 0; width: 100vw; height: 100vh; background-color: transparent; display: flex; justify-content: center; align-items: center">
       <div class="choose-dialog"  style="background-color: #F9F9F9; border-color: #6225E6; border-style: solid;">
-        <h1 style="margin-left: 20px;">Выберите цвет станции</h1>
+        <h1 style="margin-left: 20px;">Сhoose station color</h1>
         <div>
           <img @click="chooseColor($event, '1')" v-if="stationChooseDialog.variants.includes('1')" src="../assets/lines_icons/1.svg" height="200px" width="200px" style="margin-right: 50px" />
           <img @click="chooseColor($event, '2')" v-if="stationChooseDialog.variants.includes('2')" src="../assets/lines_icons/2.svg" height="200px" width="200px" style="margin-right: 50px" />
@@ -36,14 +36,14 @@
         <h1 style="margin-bottom: 15px">{{answerQuestion.station_name}} </h1>
         <p style="max-width: 400px">{{answerQuestion.text}}</p>
         <div style="display: flex">
-          <input v-model="answerQuestion.answer" placeholder="Введите ваш ответ" type="text"/>
-          <input @click="answer()" style="margin-left: 20px" value="Отправить" type="submit"/>
+          <input v-model="answerQuestion.answer" placeholder="Your answer" type="text"/>
+          <input @click="answer()" style="margin-left: 20px" value="Submit" type="submit"/>
         </div>
       </div>
     </div>
     <div v-if="showCorrect" style="position: absolute; z-index: 2; top: 0; left: 0; width: 100vw; height: 100vh; background-color: transparent; display: flex; justify-content: center; align-items: center">
       <div class="correct"  style="background-color: #F9F9F9; border-color: rgb(0, 163, 137); border-style: solid; border-radius: 20px">
-        <h1 style="margin-left: 20px;">Верный ответ</h1>
+        <h1 style="margin-left: 20px;">Correct answer</h1>
         <div style="margin-top: -70px" class="success-checkmark">
           <div class="check-icon">
             <span class="icon-line line-tip"></span>
@@ -57,7 +57,7 @@
     </div>
     <div v-if="showFailure" style="position: absolute; z-index: 2; top: 0; left: 0; width: 100vw; height: 100vh; background-color: transparent; display: flex; justify-content: center; align-items: center">
       <div class="failure"  style="display: flex; flex-direction: column; justify-content: center; align-items: center;background-color: #F9F9F9; border-color: rgb(255, 91, 91); border-style: solid; border-radius: 20px">
-        <h1 style="margin-left: 20px;">Неверный ответ</h1>
+        <h1 style="margin-left: 20px;">Wrong answer</h1>
         <svg width="150px" height="150px" style="margin-top: -70px; margin-bottom: 30px;" class="fail-icon" viewBox="0 0 206 206" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
           <title>Group</title>
           <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
@@ -71,13 +71,13 @@
       </div>
 
     </div>
-    <p v-if="(train_fullness % 100 < 10 || train_fullness % 100 > 20) && (train_fullness % 10 > 1 && train_fullness % 10 < 5)" class="score-info">{{score}} очков <br/>
-      {{tickets}} тикетов  <br/>
-      {{train_fullness}} человека в поезде
+    <p v-if="(train_fullness % 100 < 10 || train_fullness % 100 > 20) && (train_fullness % 10 > 1 && train_fullness % 10 < 5)" class="score-info">{{score}} points <br/>
+      {{tickets}} tickets  <br/>
+      {{train_fullness}} people on the train
     </p>
-    <p v-if="!(train_fullness % 100 < 10 || train_fullness % 100 > 20) || !(train_fullness % 10 > 1 && train_fullness % 10 < 5)" class="score-info">{{score}} очков <br/>
-      {{tickets}} тикетов  <br/>
-      {{train_fullness}} человек в поезде
+    <p v-if="!(train_fullness % 100 < 10 || train_fullness % 100 > 20) || !(train_fullness % 10 > 1 && train_fullness % 10 < 5)" class="score-info">{{score}} points <br/>
+      {{tickets}} tikets  <br/>
+      {{train_fullness}} people on the train
     </p>
   </div>
   <div v-if="state === 0">
@@ -88,14 +88,13 @@
   </div>
   <div id="messageWS" style="z-index: 2; position: absolute; top: 20px; left: -540px; padding: 20px; padding-left: 50px; border-radius: 15px; background-color: #FF5A5A">
     <p style="color: white">Something went wrong while connecting websocket</p>
-    <p  style="color: white">Check your traffic blockers to accept webscket connections</p>
+    <p  style="color: white">Check your traffic blockers to accept websocket connections</p>
   </div>
   <div id="messageAlready" style="z-index: 2; position: absolute; top: 20px; left: -540px; padding: 20px; padding-left: 50px; border-radius: 15px; background-color: #FF5A5A">
     <p style="color: white">Your already answered question on this station</p>
     <p  style="color: white">Try to answer questions on other stations</p>
   </div>
-  <button class="admin" v-on:click="admin()">Вход для админов</button>
-  <button class="exitGame" v-on:click="exitGame()">Выйти из игры</button>
+  <button class="exitGame" v-on:click="exitGame()">Leave game</button>
 
 </div>
 </template>
@@ -130,37 +129,36 @@ export default {
       answer: '',
       showTimeout: null
     },
+    firstStation: false,
     showCorrect: false,
     showFailure: false,
     stations : {}
   }),
   created() {
-    this.axios.get("http://176.99.173.63:8080/api/stations", ).then((response) => {
+    this.axios.get("http://127.0.0.1:8080/api/stations", ).then((response) => {
         if (response.status === 200) {
           this.stations = response.data
-          console.log(this.stations)
+          setTimeout(() => this.firstStation = true, 500)
         }
       }).catch((error) => {
-        console.log(error)
         this.$router.push({name : "EnterForm"})
     })
     if (!this.$cookies.isKey("token")) {
       this.$router.push({name: "EnterForm"})
       return
     }
-    this.connection = new WebSocket("ws://176.99.173.63:8080/ws");
+    this.connection = new WebSocket("ws://127.0.0.1:8080/ws");
     this.connection.onopen = (event) => {
       this.connection.send(this.$cookies.get("token"))
     }
 
     this.connection.onmessage = (event) => {
-      console.log(event.data)
       let message = JSON.parse(event.data)
       console.log(message.error)
       if (message.error) {
-        this.axios.get("http://176.99.173.63:8080/api/game", {headers: {"Authorization": `Bearer ${this.$cookies.get("token")}`}}).then((response) => {
+        this.axios.get("http://127.0.0.1:8080/api/game", {headers: {"Authorization": `Bearer ${this.$cookies.get("token")}`}}).then((response) => {
           if (response.status === 200) {
-            document.querySelector("#messageWS").style.left = "-20px"
+            document.querySelector("#messageWS").style.left = "-0px"
           }
           else {
             this.$cookies.remove("token")
@@ -181,7 +179,7 @@ export default {
             this.state = 0
           }
           else if (message.data.state === "in_process") {
-            this.axios.get("http://176.99.173.63:8080/api/game/passed", {headers: {"Authorization": `Bearer ${this.$cookies.get("token")}`}}).then((response) => {
+            this.axios.get("http://127.0.0.1:8080/api/game/passed", {headers: {"Authorization": `Bearer ${this.$cookies.get("token")}`}}).then((response) => {
               if (response.status === 200) {
                 for (var station of response.data.stations) {
                   this.$refs.map.activate(station.svg_id)
@@ -210,7 +208,7 @@ export default {
           this.answerQuestion.show = false
         }
         else if (this.state === -1) {
-          document.querySelector("#messageWS").style.left = "-20px"
+          document.querySelector("#messageWS").style.left = "-0px"
         }
       }
     }
@@ -258,17 +256,14 @@ export default {
         }
     },
     requestQuestion: function (station) {
-
       this.$refs.map.activate(station)
       var station_id = this.stations.find((o) => o.svg_id === station).id
-      console.log(station_id)
-      this.axios.post("http://176.99.173.63:8080/api/game/question_get", {station_id: station_id},{headers: {"Authorization": `Bearer ${this.$cookies.get("token")}`}}).then((response) => {
+      this.axios.post("http://127.0.0.1:8080/api/game/question_get", {station_id: station_id},{headers: {"Authorization": `Bearer ${this.$cookies.get("token")}`}}).then((response) => {
         if (response.status === 208) {
           document.querySelector("#messageAlready").style.left = "-20px"
           setTimeout(() => document.querySelector("#messageAlready").style.left = "-540px", 5000)
           return
         }
-        console.log(response.data)
         this.answerQuestion.show = true
         this.answerQuestion.text = response.data.text_question
         this.answerQuestion.station_name = this.station_name
@@ -282,7 +277,7 @@ export default {
       })
     },
     answer: function() {
-      this.axios.post("http://176.99.173.63:8080/api/game/question", {text: this.answerQuestion.answer},{headers: {"Authorization": `Bearer ${this.$cookies.get("token")}`}}).then((response) => {
+      this.axios.post("http://127.0.0.1:8080/api/game/question", {text: this.answerQuestion.answer},{headers: {"Authorization": `Bearer ${this.$cookies.get("token")}`}}).then((response) => {
         this.answerQuestion.show = false
         this.answerQuestion.answer = ""
         if (response.status === 200) {
@@ -299,7 +294,6 @@ export default {
           this.tickets = response.data.tickets
 
         }
-        console.log(this.answerQuestion.showTimeout)
         clearTimeout(this.answerQuestion.showTimeout)
       }).catch((error) => {
         console.log(error)
@@ -394,23 +388,6 @@ input[type="submit"] {
   margin-right: 0px !important;
 }
 
-.admin {
-  z-index: 3;
-  position: absolute;
-  left: 20px;
-  bottom: 20px;
-  background-color:  #6225E6;
-  border: none;
-  color: white;
-  padding: 15px 32px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 14px;
-  font-family: 'Rubik Mono One', sans-serif;
-
-}
-
 .score-info {
   z-index: 3;
   position: absolute;
@@ -431,7 +408,7 @@ input[type="submit"] {
 .exitGame {
   z-index: 3;
   position: absolute;
-  right: 20px;
+  left: 20px;
   bottom: 20px;
   background-color:  #6225E6;
   border: none;
@@ -445,9 +422,13 @@ input[type="submit"] {
 }
 
 #messageWS {
+  margin-top: 100px;
+  margin-left: 25px;
   transition: left 0.5s ease-in-out;
 }
 #messageAlready {
+  margin-top: 100px;
+  margin-left: 25px;
   transition: left 0.5s ease-in-out;
 }
 
