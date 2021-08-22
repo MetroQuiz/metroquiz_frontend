@@ -2850,7 +2850,7 @@ export default {
     },
     check: function(station) {
       for (var stage_obj of map[station].neighbours) {
-        console.log(stage_obj)
+        console.log("stage", map[stage_obj.to])
         if (map[stage_obj.to] && map[stage_obj.to].isActive) {
           return true
         }
@@ -2997,7 +2997,6 @@ export default {
   created() {
 
     this.$on("station_click", function(e) {
-      console.log(this.stationByName[e.target.parentElement.textContent], e.target.parentElement.textContent)
       this.$parent.stationChoose(this.stationByName[e.target.parentElement.textContent], e.target.parentElement.textContent)
     })
 

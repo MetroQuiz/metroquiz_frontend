@@ -36,14 +36,14 @@
         <h1 style="margin-bottom: 15px">{{answerQuestion.station_name}} </h1>
         <p style="max-width: 400px">{{answerQuestion.text}}</p>
         <div style="display: flex">
-          <input v-model="answerQuestion.answer" placeholder="Введите ваш ответ" type="text"/>
-          <input @click="answer()" style="margin-left: 20px" value="Отправить" type="submit"/>
+          <input v-model="answerQuestion.answer" placeholder="Your answer" type="text"/>
+          <input @click="answer()" style="margin-left: 20px" value="Submit" type="submit"/>
         </div>
       </div>
     </div>
     <div v-if="showCorrect" style="position: absolute; z-index: 2; top: 0; left: 0; width: 100vw; height: 100vh; background-color: transparent; display: flex; justify-content: center; align-items: center">
       <div class="correct"  style="background-color: #F9F9F9; border-color: rgb(0, 163, 137); border-style: solid; border-radius: 20px">
-        <h1 style="margin-left: 20px;">Correct anwer</h1>
+        <h1 style="margin-left: 20px;">Correct answer</h1>
         <div style="margin-top: -70px" class="success-checkmark">
           <div class="check-icon">
             <span class="icon-line line-tip"></span>
@@ -57,7 +57,7 @@
     </div>
     <div v-if="showFailure" style="position: absolute; z-index: 2; top: 0; left: 0; width: 100vw; height: 100vh; background-color: transparent; display: flex; justify-content: center; align-items: center">
       <div class="failure"  style="display: flex; flex-direction: column; justify-content: center; align-items: center;background-color: #F9F9F9; border-color: rgb(255, 91, 91); border-style: solid; border-radius: 20px">
-        <h1 style="margin-left: 20px;">Неверный ответ</h1>
+        <h1 style="margin-left: 20px;">Wrong answer</h1>
         <svg width="150px" height="150px" style="margin-top: -70px; margin-bottom: 30px;" class="fail-icon" viewBox="0 0 206 206" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
           <title>Group</title>
           <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
@@ -71,13 +71,13 @@
       </div>
 
     </div>
-    <p v-if="(train_fullness % 100 < 10 || train_fullness % 100 > 20) && (train_fullness % 10 > 1 && train_fullness % 10 < 5)" class="score-info">{{score}} очков <br/>
-      {{tickets}} тикетов  <br/>
-      {{train_fullness}} человека в поезде
+    <p v-if="(train_fullness % 100 < 10 || train_fullness % 100 > 20) && (train_fullness % 10 > 1 && train_fullness % 10 < 5)" class="score-info">{{score}} points <br/>
+      {{tickets}} tickets  <br/>
+      {{train_fullness}} people on the train
     </p>
-    <p v-if="!(train_fullness % 100 < 10 || train_fullness % 100 > 20) || !(train_fullness % 10 > 1 && train_fullness % 10 < 5)" class="score-info">{{score}} очков <br/>
-      {{tickets}} тикетов  <br/>
-      {{train_fullness}} человек в поезде
+    <p v-if="!(train_fullness % 100 < 10 || train_fullness % 100 > 20) || !(train_fullness % 10 > 1 && train_fullness % 10 < 5)" class="score-info">{{score}} points <br/>
+      {{tickets}} tikets  <br/>
+      {{train_fullness}} people on the train
     </p>
   </div>
   <div v-if="state === 0">
@@ -94,7 +94,6 @@
     <p style="color: white">Your already answered question on this station</p>
     <p  style="color: white">Try to answer questions on other stations</p>
   </div>
-  <button class="admin" v-on:click="admin()">Entrance for teachers</button>
   <button class="exitGame" v-on:click="exitGame()">Leave game</button>
 
 </div>
@@ -130,6 +129,7 @@ export default {
       answer: '',
       showTimeout: null
     },
+    firstStation: false,
     showCorrect: false,
     showFailure: false,
     stations : {}
@@ -138,6 +138,7 @@ export default {
     this.axios.get("http://127.0.0.1:8080/api/stations", ).then((response) => {
         if (response.status === 200) {
           this.stations = response.data
+          setTimeout(() => this.firstStation = true, 500)
         }
       }).catch((error) => {
         this.$router.push({name : "EnterForm"})
@@ -152,13 +153,12 @@ export default {
     }
 
     this.connection.onmessage = (event) => {
-      console.log(event.data)
       let message = JSON.parse(event.data)
       console.log(message.error)
       if (message.error) {
         this.axios.get("http://127.0.0.1:8080/api/game", {headers: {"Authorization": `Bearer ${this.$cookies.get("token")}`}}).then((response) => {
           if (response.status === 200) {
-            document.querySelector("#messageWS").style.left = "-20px"
+            document.querySelector("#messageWS").style.left = "-0px"
           }
           else {
             this.$cookies.remove("token")
@@ -208,7 +208,7 @@ export default {
           this.answerQuestion.show = false
         }
         else if (this.state === -1) {
-          document.querySelector("#messageWS").style.left = "-20px"
+          document.querySelector("#messageWS").style.left = "-0px"
         }
       }
     }
@@ -224,13 +224,11 @@ export default {
 
       for (var station of stations) {
         if (!this.$refs.map.check(station)) {
-          console.log("bu")
           continue;
         }
         this.stationChooseDialog.variants.push(station.slice(4).split("_")[0])
         this.stationChooseDialog.variants_full.push(station)
       }
-      console.log(this.stationChooseDialog.variants.length)
       if (this.stationChooseDialog.variants.length === 1) {
         this.requestQuestion(this.stationChooseDialog.variants_full[0])
         return
@@ -258,17 +256,14 @@ export default {
         }
     },
     requestQuestion: function (station) {
-      console.log("here")
       this.$refs.map.activate(station)
       var station_id = this.stations.find((o) => o.svg_id === station).id
-      console.log(station_id)
       this.axios.post("http://127.0.0.1:8080/api/game/question_get", {station_id: station_id},{headers: {"Authorization": `Bearer ${this.$cookies.get("token")}`}}).then((response) => {
         if (response.status === 208) {
           document.querySelector("#messageAlready").style.left = "-20px"
           setTimeout(() => document.querySelector("#messageAlready").style.left = "-540px", 5000)
           return
         }
-        console.log(response.data)
         this.answerQuestion.show = true
         this.answerQuestion.text = response.data.text_question
         this.answerQuestion.station_name = this.station_name
@@ -299,7 +294,6 @@ export default {
           this.tickets = response.data.tickets
 
         }
-        console.log(this.answerQuestion.showTimeout)
         clearTimeout(this.answerQuestion.showTimeout)
       }).catch((error) => {
         console.log(error)
@@ -394,23 +388,6 @@ input[type="submit"] {
   margin-right: 0px !important;
 }
 
-.admin {
-  z-index: 3;
-  position: absolute;
-  left: 20px;
-  bottom: 20px;
-  background-color:  #6225E6;
-  border: none;
-  color: white;
-  padding: 15px 32px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 14px;
-  font-family: 'Rubik Mono One', sans-serif;
-
-}
-
 .score-info {
   z-index: 3;
   position: absolute;
@@ -431,7 +408,7 @@ input[type="submit"] {
 .exitGame {
   z-index: 3;
   position: absolute;
-  right: 20px;
+  left: 20px;
   bottom: 20px;
   background-color:  #6225E6;
   border: none;
@@ -444,45 +421,14 @@ input[type="submit"] {
   font-family: 'Rubik Mono One', sans-serif;
 }
 
-@media screen and (max-width: 600px) {
-  .exitGame {
-    z-index: 3;
-    position: absolute;
-    left: 20px;
-    bottom: 20px;
-    background-color:  #6225E6;
-    border: none;
-    color: white;
-    padding: 15px 32px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 14px;
-    font-family: 'Rubik Mono One', sans-serif;
-    margin-bottom: 65px;
-  }
-  .admin {
-    z-index: 3;
-    position: absolute;
-    left: 20px;
-    bottom: 20px;
-    background-color:  #6225E6;
-    border: none;
-    color: white;
-    padding: 15px 32px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 14px;
-    font-family: 'Rubik Mono One', sans-serif;
-
-  }
-}
-
 #messageWS {
+  margin-top: 100px;
+  margin-left: 25px;
   transition: left 0.5s ease-in-out;
 }
 #messageAlready {
+  margin-top: 100px;
+  margin-left: 25px;
   transition: left 0.5s ease-in-out;
 }
 

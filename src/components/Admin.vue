@@ -223,19 +223,19 @@ export default {
       }).catch((error) => {
         console.log(error)
         if (error.response.status === 401) {
-          document.querySelector("#messageTogle").style.left = "-20px"
+          document.querySelector("#messageTogle").style.left = "-0px"
           setTimeout(() => document.querySelector("#messageTogle").style.left = "-540px", 3000)
         }
       })
     },
     onSubmit(event) {
       if (this.destination == this.origin) {
-        document.querySelector("#message").style.left = "-20px"
+        document.querySelector("#message").style.left = "-0px"
         setTimeout(() => document.querySelector("#messageSame").style.left = "-540px", 3000)
       }
       this.axios.post("http://127.0.0.1:8080/api/admin", this.qs.stringify({origin_id: this.origin, destination_id: this.destination}), {headers : {"Authorization": `Bearer ${this.$cookies.get("admin_token")}`}}).then((response) => {
         if (response.status === 200) {
-          document.querySelector("#messageOK").style.left = "-20px"
+          document.querySelector("#messageOK").style.left = "-0px"
           setTimeout(() => document.querySelector("#messageOK").style.left = "-540px", 3000)
           let game = response.data
           let new_game = {}
