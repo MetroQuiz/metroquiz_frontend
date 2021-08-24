@@ -1,4 +1,4 @@
-# metroquiz_frontend
+# Metroquiz frontend
 
 ## Description
 
