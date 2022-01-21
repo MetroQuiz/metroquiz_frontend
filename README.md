@@ -28,7 +28,7 @@ At the very end, frontend was implemented using Vue.js: part of the creation of 
 ## Demo
 **Link for russian version** 👉 https://www.youtube.com/watch?v=puRFLKQw0zE
 
-**Link for english version** 👉 https://youtu.be/pV6GjLf4grI 
+**Link for english version** 👉 https://www.youtube.com/watch?v=ykal0mdLOPI
 
 **🇷🇺Russian vesrion**  
 
